@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+  <meta charset="utf-8">
+  <title>Marker Clustering</title>
+  <style>
+    /* Always set the map height explicitly to define the size of the div
+    * element that contains the map. */
+
+    #map {
+      height: 100%;
+    }
+
+    /* Optional: Makes the sample page fill the window. */
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="map"></div>
+  <script>
+    var geocoder;
+
+    function initMap() {
+      geocoder = new google.maps.Geocoder();
+      var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 3,
+        minZoom: 2,
+        clickableIcons: false,
+        center: {
+          lat: 39.540476,
+          lng: -96.088301
+        },
+        MapType: "Hybrid"
+      });
+
+      // Create an array of alphabetical characters used to label the markers.
+      var markers = [];
+      var windows = [];
+      var Apiaries = {
+        "Beekeepers": [{
+          "Zip Code": "95826",
+          "Latitude": "38.5499634",
+          "Longitude": "-121.3884671",
+          "Quantity": 600,
+          "Hive Type": "Single-Deep",
+          "Breed": "Carniolian"
+        }, {
+          "Zip Code": "92501",
+          "Latitude": "33.999677",
+          "Longitude": "-117.3675233",
+          "Quantity": 480,
+          "Hive Type": "Double-Deep",
+          "Breed": "Italian"
+        }, {
+          "Zip Code": "04220",
+          "Latitude": "44.3150837",
+          "Longitude": "-70.3299569",
+          "Quantity": 14,
+          "Hive Type": "Double-Deep",
+          "Breed": "Buckfast"
+        }, {
+          "Zip Code": "84054",
+          "Latitude": "40.8458036",
+          "Longitude": "-111.9343636",
+          "Quantity": 600,
+          "Hive Type": "Single-Deep",
+          "Breed": "Italian"
+        }, {
+          "Zip Code": "96749",
+          "Latitude": "19.6053029",
+          "Longitude": "-155.0245825",
+          "Quantity": 11,
+          "Hive Type": "Triple-Deep",
+          "Breed": ""
+        }, {
+          "Zip Code": "95608",
+          "Latitude": "38.6272793",
+          "Longitude": "-121.3198491",
+          "Quantity": 10,
+          "Hive Type": "",
+          "Breed": ""
+        }]
+      }
+      var mcOptions = {
+        imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
+        gridSize: 75
+      }
+      var markerClusters = new MarkerClusterer(map, [], mcOptions);
+
+      Apiaries.Beekeepers.map(function(apiary, i) { // Switch to foreach
+        return createMarker(apiary);
+      });
+
+      function createInfo(apiary, marker) {
+        var text = '<a href="https://www.exchangebees.com/contact.html">' +
+          '<div id="content" href="https://www.exchangebees.com/contact.html">' +
+          '<h1>At this Location</h1>' +
+          '<h5/>' + apiary["Quantity"] + ' Hives </h5>' +
+          '<h5/>Hive Type: ' + apiary["Hive Type"] + '</h5>' +
+          '<h5/> Breed: ' + apiary["Breed"] + ' Bees <h5/>' +
+          '</div>' +
+          '</a>';
+        var info = new google.maps.InfoWindow({
+          content: text
+        });
+
+        windows.push(info);
+        marker.addListener('click', function() {
+          info.open(map, marker);
+        });
+      }
+
+      function createMarker(apiary) {
+        var marker = new google.maps.Marker({
+          position: {
+            lat: parseFloat(apiary.Latitude),
+            lng: parseFloat(apiary.Longitude)
+          },
+          label: apiary["Quantity"].toString(),
+          map: map
+        });
+        markers.push(marker);
+        markerClusters.addMarker(marker);
+        createInfo(apiary, marker);
+        /* lat = location.lat();
+          lng = location.lng();
+          var coord = { lat:lat, lng:lng };
+
+          // Start test Code
+          console.log(coord);
+          var text = "<h3>"+coord.lat +","+coord.lng+"<\h3><br/>";
+          document.getElementById("coord").innerHTML = document.getElementById("coord").innerHTML + text;
+          // End test Code
+          */
+      }
+
+
+
+
+
+      console.log(markers);
+
+      console.log(markerClusters.getTotalMarkers());
+    }
+  </script>
+  <!-- Replace the value of the key parameter with your own API key. -->
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkUOdZ5y7hMm0yrcCQoCvLwzdM6M8s5qk&callback=initMap"></script>
+  <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
+</body>
+
+</html>
